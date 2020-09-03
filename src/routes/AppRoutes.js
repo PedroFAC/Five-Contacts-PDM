@@ -12,10 +12,44 @@ const AppRoutes = () => {
   return (
     <NavigationContainer>
       <Navigator>
-        <Screen name="Login" component={Login} />
-        <Screen name="Signup" component={Signup} />
-        <Screen name="Contacts" component={ContactsList} />
-        <Screen name="Added" component={AddedContacts} />
+        <Screen
+          options={{ headerShown: false }}
+          name="Login"
+          component={Login}
+        />
+        <Screen
+          options={{
+            title: "Signup",
+            headerTintColor: "#ffffff",
+            headerStyle: {
+              backgroundColor: "#ff3221",
+            },
+          }}
+          name="Signup"
+          component={Signup}
+        />
+        <Screen
+          options={{
+            title: "Seus contatos",
+            headerTintColor: "#ffffff",
+            headerStyle: {
+              backgroundColor: "#ff3221",
+            },
+          }}
+          name="Contacts"
+          component={ContactsList}
+        />
+        <Screen
+          options={{
+            title: "Contatos adicionados",
+            headerTintColor: "#ffffff",
+            headerStyle: {
+              backgroundColor: "#ff3221",
+            },
+          }}
+          name="Added"
+          component={AddedContacts}
+        />
       </Navigator>
     </NavigationContainer>
   );

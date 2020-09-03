@@ -2,39 +2,33 @@ import React, { useState } from "react";
 import { Button, TextInput } from "react-native";
 import { Container, View } from "native-base";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from "@react-native-community/async-storage";
+import styles from "./styles";
 
-
-const Login = () => {
+const Signup = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const { navigate } = useNavigation();
 
-  async function registerUser(value){
-    try{
-      const jsonValue = JSON.stringify(value)
-      await AsyncStorage.setItem(username, jsonValue);
-      console.log('Success');
-      navigate('Login');
-    }catch(error){
+  async function registerUser(value) {
+    try {
+      if (password === confirmPassword) {
+        const jsonValue = JSON.stringify(value);
+        await AsyncStorage.setItem(username, jsonValue);
+        console.log("Success");
+        navigate("Contacts", { username, password, firstTime: true });
+      }else{
+        alert('Erro de credenciais')
+      }
+    } catch (error) {
       console.log(error);
-
     }
   }
   return (
-    <Container
-      style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-    >
+    <Container style={styles.container}>
       <TextInput
-        style={{
-          width: "80%",
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          marginVertical: 10,
-          padding: 10,
-        }}
+        style={styles.input}
         placeholder="Login"
         value={username}
         onChangeText={(value) => setUsername(value)}
@@ -42,36 +36,24 @@ const Login = () => {
       <TextInput
         secureTextEntry
         placeholder="Password"
-        style={{
-          width: "80%",
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          marginVertical: 10,
-          padding: 10,
-        }}
+        style={styles.input}
         value={password}
         onChangeText={(value) => setPassword(value)}
       />
       <TextInput
         secureTextEntry
         placeholder="Confirm Password"
-        style={{
-          width: "80%",
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          marginVertical: 10,
-          padding: 10,
-        }}
+        style={styles.input}
         value={confirmPassword}
         onChangeText={(value) => setConfirmPassword(value)}
       />
 
-      <View style={{ marginVertical: 10 }}>
+      <View style={styles.buttonView}>
         <Button
-          onPress={()=>registerUser({username,password})}
-          style={{ marginVertical: 10 }}
+          color="#fe5722"
+          onPress={() =>
+            registerUser({ username, password, addedContacts: [] })
+          }
           title="Signup"
         />
       </View>
@@ -79,4 +61,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

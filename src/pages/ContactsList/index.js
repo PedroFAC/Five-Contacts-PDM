@@ -1,21 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "react-native";
-import { Container, Content, List, ListItem, Text } from "native-base";
-import call from "react-native-phone-call";
-import * as SMS from "expo-sms";
+import { Container, Content, List, ListItem, Text, Spinner } from "native-base";
 import * as Contacts from "expo-contacts";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-community/async-storage";
+import styles from "./styles";
 
-const ContactsList = () => {
+const ContactsList = ({ route }) => {
   const { navigate } = useNavigation();
   const [contacts, setContacts] = useState([]);
   const [contactsToAdd, setContactsToAdd] = useState([]);
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  async function handleSms(number) {
-    const isAvailable = await SMS.isAvailableAsync();
-    isAvailable ? SMS.sendSMSAsync(number, "Teste") : console.log("erro");
+  const [loading, setLoading] = useState(true);
+  const { username, password, firstTime } = route.params;
+  async function handleAddContacts(value) {
+    try {
+      const jsonValue = JSON.stringify({
+        username,
+        password,
+        addedContacts: value,
+      });
+      await AsyncStorage.setItem(username, jsonValue);
+      console.log("Success");
+      if (firstTime) {
+        navigate("Login");
+      } else {
+        navigate("Added");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
-
   useEffect(() => {
     (async () => {
       const { status } = await Contacts.requestPermissionsAsync();
@@ -27,6 +42,7 @@ const ContactsList = () => {
         if (data.length > 0) {
           const list = data;
           setContacts(list);
+          setLoading(false);
         }
       }
     })();
@@ -46,36 +62,36 @@ const ContactsList = () => {
     }
   }
 
-  function handleAddContacts() {
-    navigate("Added", { contacts: contactsToAdd });
-    console.log(contactsToAdd);
-  }
-
   return (
-    <Container style={{ flex: 1 }}>
+    <Container style={styles.container}>
       <Content>
-        <List>
-          {contacts.map((contact) => {
-            return (
-              <ListItem
-                key={contact.id}
-                onPress={() =>
-                  handleContactsToAdd({
-                    id: contact.id,
-                    name: contact.name,
-                    phoneNumber: contact.phoneNumbers[0].number,
-                  })
-                }
-              >
-                <Text>{contact.name}</Text>
-              </ListItem>
-            );
-          })}
-        </List>
+        {loading ? (
+          <Spinner style={{marginTop:'50%'}} size='large' color="red" />
+        ) : (
+          <List>
+            {contacts.map((contact) => {
+              return (
+                <ListItem
+                  key={contact.id}
+                  onPress={() =>
+                    handleContactsToAdd({
+                      id: contact.id,
+                      name: contact.name,
+                      phoneNumber: contact.phoneNumbers[0].number,
+                    })
+                  }
+                >
+                  <Text>{contact.name}</Text>
+                </ListItem>
+              );
+            })}
+          </List>
+        )}
       </Content>
       <Button
+        color="#fe5722"
         title="Adicionar Contatos"
-        onPress={() => handleAddContacts()}
+        onPress={() => handleAddContacts(contactsToAdd)}
       />
     </Container>
   );

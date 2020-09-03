@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Button, TextInput } from "react-native";
 import { Container, View } from "native-base";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from '@react-native-community/async-storage';
-
+import AsyncStorage from "@react-native-community/async-storage";
+import styles from "./styles";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -11,31 +11,22 @@ const Login = () => {
   const { navigate } = useNavigation();
   async function handleLogin() {
     try {
-      const jsonValue = await AsyncStorage.getItem(username)
+      const jsonValue = await AsyncStorage.getItem(username);
       const realValue = jsonValue != null ? JSON.parse(jsonValue) : null;
-      if(password === realValue.password){
-        navigate('Added',{contacts:[]})
-      }else{
-        console.log('failure')
+      if (password === realValue.password) {
+        navigate("Added", { user: realValue });
+      } else {
+        alert('Credenciais incorretas')
       }
-    } catch(error) {
-      console.log(error)
+    } catch (error) {
+      console.log(error);
     }
   }
 
   return (
-    <Container
-      style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-    >
+    <Container style={styles.container}>
       <TextInput
-        style={{
-          width: "80%",
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          marginVertical: 10,
-          padding: 10,
-        }}
+        style={styles.input}
         placeholder="Login"
         value={username}
         onChangeText={(value) => setUsername(value)}
@@ -43,30 +34,15 @@ const Login = () => {
       <TextInput
         secureTextEntry
         placeholder="Password"
-        style={{
-          width: "80%",
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          marginVertical: 10,
-          padding: 10,
-        }}
+        style={styles.input}
         value={password}
         onChangeText={(value) => setPassword(value)}
       />
-      <View>
-        <Button
-          onPress={()=>handleLogin()}
-          style={{ marginVertical: 10 }}
-          title="Login"
-        />
+      <View style={styles.button}>
+        <Button color='#fe5722' onPress={() => handleLogin()} title="Login" />
       </View>
-      <View style={{ marginVertical: 10 }}>
-        <Button
-          onPress={() => navigate("Signup")}
-          style={{ marginVertical: 10 }}
-          title="Signup"
-        />
+      <View style={styles.button}>
+        <Button color='#fe5722' onPress={() => navigate("Signup")} title="Signup" />
       </View>
     </Container>
   );
