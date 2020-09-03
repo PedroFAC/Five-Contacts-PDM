@@ -63,6 +63,13 @@ const AddedContacts = ({ route }) => {
           color="white"
         />
       </Fab>
+      <Fab position='bottomLeft' style={{backgroundColor:'#fe5722'}} onPress={() => navigate("Settings", user)}>
+        <MaterialCommunityIcons
+          name="settings"
+          size={24}
+          color="white"
+        />
+      </Fab>
     </Container>
   );
 };

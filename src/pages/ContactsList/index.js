@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "react-native";
-import { Container, Content, List, ListItem, Text, Spinner } from "native-base";
+import {
+  Container,
+  Content,
+  List,
+  ListItem,
+  Text,
+  Spinner,
+  Body,
+  CheckBox,
+} from "native-base";
 import * as Contacts from "expo-contacts";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -10,8 +19,8 @@ const ContactsList = ({ route }) => {
   const { navigate } = useNavigation();
   const [contacts, setContacts] = useState([]);
   const [contactsToAdd, setContactsToAdd] = useState([]);
-  const [buttonDisabled, setButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [len, setLen] = useState(contactsToAdd.length);
   const { username, password, firstTime } = route.params;
   async function handleAddContacts(value) {
     try {
@@ -47,26 +56,39 @@ const ContactsList = ({ route }) => {
       }
     })();
   }, []);
-  useEffect(() => {
-    if (contactsToAdd.length === 5) {
-      setButtonDisabled(false);
-      console.log(buttonDisabled);
-    }
-  }, [contactsToAdd]);
   function handleContactsToAdd(value) {
     if (contactsToAdd.length <= 4) {
       let tempArray = contactsToAdd;
-      tempArray.push(value);
-      setContactsToAdd(tempArray);
-      console.log(contactsToAdd.length);
+      let added = false;
+      contactsToAdd.map((item) => {
+        if (value.id === item.id) {
+          added = true;
+        }
+      });
+      if (added) {
+        alert("already added");
+      } else {
+        tempArray.push(value);
+        setContactsToAdd(tempArray);
+        setLen(contactsToAdd.length);
+      }
     }
+  }
+  function checkedItem(id) {
+    let checked = false;
+    contactsToAdd.map((item) => {
+      if (id === item.id) {
+        checked = true;
+      }
+    });
+    return checked;
   }
 
   return (
     <Container style={styles.container}>
       <Content>
         {loading ? (
-          <Spinner style={{marginTop:'50%'}} size='large' color="red" />
+          <Spinner style={{ marginTop: "50%" }} size="large" color="red" />
         ) : (
           <List>
             {contacts.map((contact) => {
@@ -81,7 +103,10 @@ const ContactsList = ({ route }) => {
                     })
                   }
                 >
-                  <Text>{contact.name}</Text>
+                  <CheckBox checked={checkedItem(contact.id)} color="red" />
+                  <Body>
+                    <Text>{contact.name}</Text>
+                  </Body>
                 </ListItem>
               );
             })}
@@ -90,7 +115,7 @@ const ContactsList = ({ route }) => {
       </Content>
       <Button
         color="#fe5722"
-        title="Adicionar Contatos"
+        title={`Adicionar ${len} Contatos`}
         onPress={() => handleAddContacts(contactsToAdd)}
       />
     </Container>

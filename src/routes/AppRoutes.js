@@ -5,6 +5,7 @@ import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import ContactsList from "../pages/ContactsList";
 import AddedContacts from "../pages/AddedContacts";
+import Settings from "../pages/Settings";
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -49,6 +50,17 @@ const AppRoutes = () => {
           }}
           name="Added"
           component={AddedContacts}
+        />
+        <Screen
+          options={{
+            title: "Configurações",
+            headerTintColor: "#ffffff",
+            headerStyle: {
+              backgroundColor: "#ff3221",
+            },
+          }}
+          name="Settings"
+          component={Settings}
         />
       </Navigator>
     </NavigationContainer>
