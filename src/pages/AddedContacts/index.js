@@ -36,8 +36,7 @@ const AddedContacts = () => {
       }
     }
     listContacts();
-    console.log(contacts)
-  }, []);
+  }, [contacts]);
 
   return (
     <Container style={{ flex: 1 }}>
