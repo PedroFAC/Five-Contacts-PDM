@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Login from "../pages/Login";
@@ -44,6 +44,7 @@ const AppRoutes = () => {
           options={{
             title: "Contatos adicionados",
             headerTintColor: "#ffffff",
+            headerLeft: null,
             headerStyle: {
               backgroundColor: "#ff3221",
             },

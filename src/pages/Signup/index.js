@@ -10,16 +10,29 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const { navigate } = useNavigation();
-
-  async function registerUser(value) {
+  async function checkIfAdded() {
     try {
-      if (password === confirmPassword) {
+      const jsonValue = await AsyncStorage.getItem(username);
+      const realValue = jsonValue != null ? JSON.parse(jsonValue) : null;
+      if (realValue !== null) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch  {
+      return false;
+    }
+  }
+  async function registerUser(value) {
+    const added = await checkIfAdded();
+    try {
+      if (password === confirmPassword && added === false) {
         const jsonValue = JSON.stringify(value);
         await AsyncStorage.setItem(username, jsonValue);
         console.log("Success");
-        navigate("Contacts", { username, password, firstTime: true });
-      }else{
-        alert('Erro de credenciais')
+        navigate("Login");
+      } else {
+        alert("Erro de credenciais");
       }
     } catch (error) {
       console.log(error);

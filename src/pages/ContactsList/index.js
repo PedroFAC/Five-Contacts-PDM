@@ -15,27 +15,23 @@ import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-community/async-storage";
 import styles from "./styles";
 
-const ContactsList = ({ route }) => {
+const ContactsList = () => {
   const { navigate } = useNavigation();
   const [contacts, setContacts] = useState([]);
   const [contactsToAdd, setContactsToAdd] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [len, setLen] = useState(contactsToAdd.length);
-  const { username, password, firstTime } = route.params;
+  const [currentUser, setCurrentUser] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
   async function handleAddContacts(value) {
     try {
       const jsonValue = JSON.stringify({
-        username,
-        password,
+        username: currentUser,
+        password: currentPassword,
         addedContacts: value,
       });
-      await AsyncStorage.setItem(username, jsonValue);
+      await AsyncStorage.setItem(currentUser, jsonValue);
       console.log("Success");
-      if (firstTime) {
-        navigate("Login");
-      } else {
-        navigate("Added");
-      }
+      navigate("Added");
     } catch (error) {
       console.log(error);
     }
@@ -56,66 +52,66 @@ const ContactsList = ({ route }) => {
       }
     })();
   }, []);
+  useEffect(() => {
+    async function listContacts() {
+      try {
+        const sessionValue = await AsyncStorage.getItem("session");
+        const realSessionValue =
+          sessionValue != null ? JSON.parse(sessionValue) : null;
+        const jsonValue = await AsyncStorage.getItem(realSessionValue.username);
+        const realValue = jsonValue != null ? JSON.parse(jsonValue) : null;
+        setCurrentUser(realValue.username);
+        setCurrentPassword(realValue.password);
+        setContactsToAdd(realValue.addedContacts);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    listContacts();
+  }, []);
   function handleContactsToAdd(value) {
-    if (contactsToAdd.length <= 4) {
-      let tempArray = contactsToAdd;
-      let added = false;
-      contactsToAdd.map((item) => {
-        if (value.id === item.id) {
-          added = true;
-        }
-      });
-      if (added) {
-        alert("already added");
-      } else {
+    let tempArray = contactsToAdd;
+    let added = false;
+    let removable;
+    contactsToAdd.map((item, index) => {
+      if (value.id === item.id) {
+        added = true;
+        removable = index;
+      }
+    });
+    if (added) {
+      tempArray.splice(removable, 1);
+      setContactsToAdd(tempArray);
+    } else {
+      if (contactsToAdd.length <= 4) {
         tempArray.push(value);
         setContactsToAdd(tempArray);
-        setLen(contactsToAdd.length);
+      } else {
+        alert("Remova um contato para adicionar outro");
       }
     }
   }
-  function checkedItem(id) {
-    let checked = false;
-    contactsToAdd.map((item) => {
-      if (id === item.id) {
-        checked = true;
-      }
-    });
-    return checked;
-  }
-
   return (
     <Container style={styles.container}>
-      <Content>
-        {loading ? (
-          <Spinner style={{ marginTop: "50%" }} size="large" color="red" />
-        ) : (
-          <List>
-            {contacts.map((contact) => {
-              return (
-                <ListItem
-                  key={contact.id}
-                  onPress={() =>
-                    handleContactsToAdd({
-                      id: contact.id,
-                      name: contact.name,
-                      phoneNumber: contact.phoneNumbers[0].number,
-                    })
-                  }
-                >
-                  <CheckBox checked={checkedItem(contact.id)} color="red" />
-                  <Body>
-                    <Text>{contact.name}</Text>
-                  </Body>
-                </ListItem>
-              );
-            })}
-          </List>
-        )}
-      </Content>
+      {loading ? (
+        <Spinner style={{ marginTop: "50%" }} size="large" color="red" />
+      ) : (
+        <List
+          dataArray={contacts}
+          initialListSize={10}
+          renderRow={(item) => (
+            <ListItem
+              selected={contactsToAdd.some((e) => e.id === item.id)}
+              onPress={() => handleContactsToAdd(item)}
+            >
+              <Text>{item.name}</Text>
+            </ListItem>
+          )}
+        />
+      )}
       <Button
         color="#fe5722"
-        title={`Adicionar ${len} Contatos`}
+        title={`Adicionar Contatos`}
         onPress={() => handleAddContacts(contactsToAdd)}
       />
     </Container>

@@ -1,57 +1,72 @@
-import React, { useState,useEffect } from "react";
-import { Button } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Button, Text ,View} from "react-native";
 import { Container, Switch } from "native-base";
 import AsyncStorage from "@react-native-community/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 import styles from "./styles";
 
-const Settings = ({ route }) => {
+const Settings = () => {
   const [toggle, setToggle] = useState(false);
-  const { user } = route.params;
+  const [currentUser, setCurrentUser] = useState('')
+
+  const { navigate } = useNavigation();
 
   function handleToggle() {
     setToggle(!toggle);
   }
   useEffect(() => {
-    console.log(user)
     async function getLoginOption() {
       try {
-        const jsonValue = await AsyncStorage.getItem("currentUser");
+        const jsonValue = await AsyncStorage.getItem("session");
         const realValue = jsonValue != null ? JSON.parse(jsonValue) : null;
         setToggle(realValue.keep);
+        setCurrentUser(realValue.username)
       } catch (error) {
         console.log(error);
       }
-    };
+    }
     getLoginOption();
   }, []);
 
   async function handleKeepLogged() {
     if (toggle) {
       const jsonValue = JSON.stringify({
-        username: user.username,
-        password: user.password,
+        username: currentUser,
         keep: true,
       });
-      try{
-        await AsyncStorage.setItem("currentUser", jsonValue);
-        console.log('sucess')
-      }catch(error){
-        console.log(error)
+      try {
+        await AsyncStorage.setItem("session", jsonValue);
+        navigate('Added')
+        console.log("keep:true");
+      } catch (error) {
+        console.log(error);
       }
     } else {
       const jsonValue = JSON.stringify({
-        username: "",
-        password: "",
+        username: currentUser,
         keep: false,
       });
-      await AsyncStorage.setItem("currentUser", jsonValue);
+      try {
+        await AsyncStorage.setItem("session", jsonValue);
+        navigate('Added')
+        console.log("keep:false");
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
   return (
     <Container style={styles.container}>
-      <Switch value={toggle} onValueChange={() => handleToggle()} />
-      <Button onPress={()=> handleKeepLogged()} color="#fe5722" title={`Confirmar mudanças`} />
+      <View>
+        <Text>Manter logado?</Text>
+        <Switch value={toggle} onValueChange={() => handleToggle()} />
+      </View>
+      <Button
+        onPress={() => handleKeepLogged()}
+        color="#fe5722"
+        title={`Confirmar mudanças`}
+      />
     </Container>
   );
 };

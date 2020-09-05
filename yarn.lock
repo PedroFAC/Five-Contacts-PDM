@@ -2536,6 +2536,11 @@ expo-font@~8.2.1:
     fbjs "1.0.0"
     fontfaceobserver "^2.1.0"
 
+expo-intent-launcher@~8.2.1:
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/expo-intent-launcher/-/expo-intent-launcher-8.2.1.tgz#e87c532cdc501e3e4804a2bbd056cbe200883efc"
+  integrity sha512-8G90TVVUPZz8fJ2ZneBe9d2zq1VUdOxCrkYke5zKrTIzxmYTBdXMIArmgl7zgQFI0vnNk9BCEYp6zTHbKP01TA==
+
 expo-keep-awake@~8.2.1:
   version "8.2.1"
   resolved "https://registry.yarnpkg.com/expo-keep-awake/-/expo-keep-awake-8.2.1.tgz#a7956ad0fa80eb6ac6a28bb7242408e87c493677"

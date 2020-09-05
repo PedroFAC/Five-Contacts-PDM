@@ -7,13 +7,13 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-community/async-storage";
 import * as Permissions from "expo-permissions";
 
-const AddedContacts = ({ route }) => {
-  const { user } = route.params;
+const AddedContacts = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { navigate } = useNavigation();
   async function handleCall(number) {
     const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
+    console.log
     if (status == "granted") {
       const args = {
         number,
@@ -25,7 +25,9 @@ const AddedContacts = ({ route }) => {
   useEffect(() => {
     async function listContacts() {
       try {
-        const jsonValue = await AsyncStorage.getItem(user.username);
+        const sessionValue = await AsyncStorage.getItem('session');
+        const realSessionValue = sessionValue != null ? JSON.parse(sessionValue) : null;
+        const jsonValue = await AsyncStorage.getItem(realSessionValue.username);
         const realValue = jsonValue != null ? JSON.parse(jsonValue) : null;
         setContacts(realValue.addedContacts);
         setLoading(false);
@@ -34,7 +36,8 @@ const AddedContacts = ({ route }) => {
       }
     }
     listContacts();
-  }, [contacts]);
+    console.log(contacts)
+  }, []);
 
   return (
     <Container style={{ flex: 1 }}>
@@ -46,7 +49,7 @@ const AddedContacts = ({ route }) => {
             {contacts.map((contact) => {
               return (
                 <ListItem
-                  onPress={() => handleCall(contact.phoneNumber)}
+                  onPress={() => handleCall(contact.phoneNumbers[0].number)}
                   key={contact.id}
                 >
                   <Text>{contact.name}</Text>
@@ -56,14 +59,14 @@ const AddedContacts = ({ route }) => {
           </List>
         )}
       </Content>
-      <Fab style={{backgroundColor:'#fe5722'}} onPress={() => navigate("Contacts", user)}>
+      <Fab style={{backgroundColor:'#fe5722'}} onPress={() => navigate("Contacts")}>
         <MaterialCommunityIcons
           name="swap-horizontal"
           size={24}
           color="white"
         />
       </Fab>
-      <Fab position='bottomLeft' style={{backgroundColor:'#fe5722'}} onPress={() => navigate("Settings", user)}>
+      <Fab position='bottomLeft' style={{backgroundColor:'#fe5722'}} onPress={() => navigate("Settings")}>
         <MaterialCommunityIcons
           name="settings"
           size={24}
