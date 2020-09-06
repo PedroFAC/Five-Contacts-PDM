@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, TextInput, Text } from "react-native";
 import { Container, View, Switch } from "native-base";
 import { useNavigation } from "@react-navigation/native";
@@ -10,24 +10,29 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [toggle, setToggle] = useState(false);
   const { navigate } = useNavigation();
-  
+
   async function handleLogin() {
     try {
-      const jsonValue = await AsyncStorage.getItem(username);
-      const realValue = jsonValue != null ? JSON.parse(jsonValue) : null;
-      if (password === realValue.password) {
-        await handleKeepLogged();
-        const parsedObject = JSON.stringify({
-          username,
-          keep: toggle,
-        });
-        await AsyncStorage.setItem("session", parsedObject);
-        navigate("Added");
-      } else {
-        alert("Credenciais incorretas");
+      if (username !== "" && password !== "") {
+        const jsonValue = await AsyncStorage.getItem(username);
+        const realValue = jsonValue != null ? JSON.parse(jsonValue) : null;
+        if (password === realValue.password) {
+          await handleKeepLogged();
+          const parsedObject = JSON.stringify({
+            username,
+            keep: toggle,
+          });
+          await AsyncStorage.setItem("session", parsedObject);
+          navigate("Added");
+        } else {
+          alert("Credenciais incorretas");
+        }
+      }else{
+        alert("Credenciais incorretas")
       }
     } catch (error) {
       console.log(error);
+      alert("Credenciais incorretas")
     }
   }
   async function handleKeepLogged() {

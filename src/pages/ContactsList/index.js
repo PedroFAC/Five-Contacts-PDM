@@ -57,7 +57,7 @@ const ContactsList = () => {
       try {
         const sessionValue = await AsyncStorage.getItem("session");
         const realSessionValue =
-          sessionValue != null ? JSON.parse(sessionValue) : null;
+        sessionValue != null ? JSON.parse(sessionValue) : null;
         const jsonValue = await AsyncStorage.getItem(realSessionValue.username);
         const realValue = jsonValue != null ? JSON.parse(jsonValue) : null;
         setCurrentUser(realValue.username);
@@ -104,7 +104,13 @@ const ContactsList = () => {
               selected={contactsToAdd.some((e) => e.id === item.id)}
               onPress={() => handleContactsToAdd(item)}
             >
-              <Text>{item.name}</Text>
+              <CheckBox
+                color="red"
+                checked={contactsToAdd.some((e) => e.id === item.id)}
+              />
+              <Body>
+                <Text>{item.name}</Text>
+              </Body>
             </ListItem>
           )}
         />

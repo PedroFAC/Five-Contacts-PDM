@@ -19,14 +19,20 @@ const Signup = () => {
       } else {
         return false;
       }
-    } catch  {
+    } catch {
       return false;
     }
   }
   async function registerUser(value) {
     const added = await checkIfAdded();
     try {
-      if (password === confirmPassword && added === false) {
+      if (
+        password === confirmPassword &&
+        added === false &&
+        password !== "" &&
+        confirmPassword !== "" &&
+        username !== ""
+      ) {
         const jsonValue = JSON.stringify(value);
         await AsyncStorage.setItem(username, jsonValue);
         console.log("Success");
