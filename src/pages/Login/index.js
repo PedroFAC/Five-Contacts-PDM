@@ -19,7 +19,7 @@ const Login = () => {
         if (password === realValue.password) {
           await handleKeepLogged();
           const parsedObject = JSON.stringify({
-            username,
+            username: username,
             keep: toggle,
           });
           await AsyncStorage.setItem("session", parsedObject);

@@ -32,8 +32,7 @@ const Settings = () => {
     async function getSession() {
       try {
         const jsonSession = await AsyncStorage.getItem(currentUser);
-        const realSessionValue =
-          jsonSession != null ? JSON.parse(jsonSession) : null;
+        const realSessionValue = jsonSession != null ? JSON.parse(jsonSession) : null;
         setUsername(realSessionValue.username);
         setPassword(realSessionValue.password);
         setConfirmPassword(realSessionValue.password);
@@ -44,6 +43,7 @@ const Settings = () => {
     }
     getLoginOption();
     getSession();
+    console.log(addedContacts)
   }, [currentUser]);
 
   async function handleChanges() {

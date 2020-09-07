@@ -10,10 +10,11 @@ import * as Permissions from "expo-permissions";
 const AddedContacts = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState("");
   const { navigate } = useNavigation();
   async function handleCall(number) {
     const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
-    console.log
+    console.log;
     if (status == "granted") {
       const args = {
         number,
@@ -25,52 +26,55 @@ const AddedContacts = () => {
   useEffect(() => {
     async function listContacts() {
       try {
-        const sessionValue = await AsyncStorage.getItem('session');
-        const realSessionValue = sessionValue != null ? JSON.parse(sessionValue) : null;
+        const sessionValue = await AsyncStorage.getItem("session");
+        const realSessionValue =
+        sessionValue != null ? JSON.parse(sessionValue) : null;
         const jsonValue = await AsyncStorage.getItem(realSessionValue.username);
         const realValue = jsonValue != null ? JSON.parse(jsonValue) : null;
+        setCurrentUser(realValue.username);
         setContacts(realValue.addedContacts);
-        setLoading(false);
+        setLoading(false)
       } catch (error) {
         console.log(error);
       }
     }
     listContacts();
-  }, [contacts]);
+  }, [contacts, currentUser]);
 
   return (
     <Container style={{ flex: 1 }}>
-      <Content>
-        {loading ? (
-          <Spinner size='large' color="red" />
-        ) : (
-          <List>
-            {contacts.map((contact) => {
-              return (
-                <ListItem
-                  onPress={() => handleCall(contact.phoneNumbers[0].number)}
-                  key={contact.id}
-                >
-                  <Text>{contact.name}</Text>
-                </ListItem>
-              );
-            })}
-          </List>
-        )}
-      </Content>
-      <Fab style={{backgroundColor:'#fe5722'}} onPress={() => navigate("Contacts")}>
+      {loading ? (
+        <Spinner size="large" color="red" />
+      ) : (
+        <List>
+          {contacts.map((contact) => {
+            return (
+              <ListItem
+                onPress={() => handleCall(contact.phoneNumbers[0].number)}
+                key={contact.id}
+              >
+                <Text>{contact.name}</Text>
+              </ListItem>
+            );
+          })}
+        </List>
+      )}
+      <Fab
+        style={{ backgroundColor: "#fe5722" }}
+        onPress={() => navigate("Contacts")}
+      >
         <MaterialCommunityIcons
           name="swap-horizontal"
           size={24}
           color="white"
         />
       </Fab>
-      <Fab position='bottomLeft' style={{backgroundColor:'#fe5722'}} onPress={() => navigate("Settings")}>
-        <MaterialCommunityIcons
-          name="settings"
-          size={24}
-          color="white"
-        />
+      <Fab
+        position="bottomLeft"
+        style={{ backgroundColor: "#fe5722" }}
+        onPress={() => navigate("Settings")}
+      >
+        <MaterialCommunityIcons name="settings" size={24} color="white" />
       </Fab>
     </Container>
   );
