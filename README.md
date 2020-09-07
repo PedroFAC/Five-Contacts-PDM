@@ -11,4 +11,6 @@ Criada em React Native(Expo).
 
 
 ![QRCODE](https://i.imgur.com/kcHof4y.png)
+
+
 ![Print](https://i.imgur.com/X67lAKz.png)
